@@ -79,7 +79,14 @@ export const BlogPosts = () => {
   return (
     <div>
       <h3>Blog Posts</h3>
-      <Button onClick={() => toggleShowFormModal()} type="button">
+      <Button
+        onClick={() => {
+          setCurrentSelectedIndex(null);
+          setCurrentSelectedPost(null);
+          toggleShowFormModal();
+        }}
+        type="button"
+      >
         Add Post
       </Button>
       <Datatable
