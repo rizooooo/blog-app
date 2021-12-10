@@ -81,8 +81,6 @@ export const BlogPosts = () => {
       <h3>Blog Posts</h3>
       <Button
         onClick={() => {
-          setCurrentSelectedIndex(null);
-          setCurrentSelectedPost(null);
           toggleShowFormModal();
         }}
         type="button"
@@ -95,6 +93,12 @@ export const BlogPosts = () => {
         onActionClick={onActionClick}
       />
       <FormModal
+        submitText={currentSelectedPost ? "Update" : "Add"}
+        headerTitle={currentSelectedPost ? "Update Post" : "Add Post"}
+        onModalClose={() => {
+          setCurrentSelectedIndex(null);
+          setCurrentSelectedPost(null);
+        }}
         defaultValues={currentSelectedPost!}
         onSubmit={onSubmit}
         show={showFormModal}

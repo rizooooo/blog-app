@@ -1,4 +1,5 @@
 import { BlogPost } from "app/types";
+import { getCurrentDate } from "app/utils";
 import { FC, FormEventHandler, useEffect, useState } from "react";
 import {
   Button,
@@ -20,23 +21,35 @@ interface IFormModalProps {
   onSubmit?: (value: IFormValues) => void;
 
   defaultValues?: BlogPost;
+
+  onModalClose?: () => void;
+
+  headerTitle?: string;
+  submitText?: string;
 }
 
 interface IFormValues {
   postTitle: string;
   postContent: string;
+  createAt?: string;
 }
+
+const initialState = {
+  postContent: "",
+  postTitle: "",
+  createdAt: getCurrentDate(),
+};
 
 export const FormModal: FC<IFormModalProps> = ({
   show,
   toggle = () => null,
   onSubmit: onSubmitProps,
   defaultValues,
+  onModalClose,
+  headerTitle = "Post",
+  submitText = "Submit",
 }) => {
-  const [formValues, setFormValues] = useState<IFormValues>({
-    postTitle: "",
-    postContent: "",
-  });
+  const [formValues, setFormValues] = useState<IFormValues>(initialState);
 
   const [showErrors, setShowErrors] = useState(false);
 
@@ -64,17 +77,28 @@ export const FormModal: FC<IFormModalProps> = ({
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
 
   useEffect(() => {
+    console.log(defaultValues, "defaultValues");
     if (defaultValues) {
       setFormValues(defaultValues);
+    } else {
+      setFormValues(initialState);
     }
   }, [defaultValues]);
 
   const { postTitle, postContent } = formValues;
 
   return (
-    <Modal isOpen={show}>
+    <Modal
+      isOpen={show}
+      onClosed={() => {
+        if (onModalClose) {
+          onModalClose();
+        }
+        setFormValues(initialState);
+      }}
+    >
       <Form onSubmit={onSubmit}>
-        <ModalHeader toggle={toggle}>Update Post</ModalHeader>
+        <ModalHeader toggle={toggle}>{headerTitle}</ModalHeader>
         <ModalBody>
           <FormGroup>
             <Label for="exampleEmail">Title</Label>
@@ -102,12 +126,8 @@ export const FormModal: FC<IFormModalProps> = ({
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <Button
-            type="submit"
-            color="primary"
-            onClick={function noRefCheck() {}}
-          >
-            Update
+          <Button type="submit" color="primary">
+            {submitText}
           </Button>{" "}
           <Button onClick={toggle}>Cancel</Button>
         </ModalFooter>
